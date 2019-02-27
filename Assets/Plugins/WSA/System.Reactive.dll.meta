@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 29525a16028f6c84fbc059d0c5e37277
+guid: 3ed92d7747b509b438d7e247d31c5f9a
 PluginImporter:
   externalObjects: {}
   serializedVersion: 2
@@ -93,7 +93,7 @@ PluginImporter:
       settings:
         CPU: AnyCPU
         DontProcess: true
-        PlaceholderPath: Assets/Plugins/IMUObserverCore.dll
+        PlaceholderPath: 
         SDK: AnySDK
         ScriptingBackend: AnyScriptingBackend
   userData: 
