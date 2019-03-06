@@ -11,12 +11,17 @@ namespace IMUDevice {
                     RemoveListenner(peripheral);
                     AddListenner(value);
                     peripheral = value;
+                    PeripheralId = peripheral?.ID.Replace("BluetoothLE#BluetoothLE", "") ?? string.Empty;
                 }
             }
             get { return peripheral; }
         }
 
-        private void AddListenner(Peripheral p) {
+        public string PeripheralId { private set; get; } = string.Empty;
+        public string RawPeripheralId { get => peripheral?.ID ?? string.Empty; }
+        public bool HasPeripheral { get => !string.IsNullOrEmpty(RawPeripheralId); }
+
+        void AddListenner(Peripheral p) {
             if (p == null) {
                 return;
             }
@@ -25,11 +30,12 @@ namespace IMUDevice {
             p.GyroUpdateEvent += OnGyroUpdate;
             p.CompassUpdateEvent += OnCompassUpdate;
             p.QuaternionUpdateEvent += OnQuaternionUpdate;
-            p.ButtonPushEvent += b => OnButtonPush(b.button);
-            p.ButtonReleaseEvent += b => OnButtonRelease(b.button, b.pressTime);
+            p.IMUSensorUpdateEvent += OnIMUSensorUpdate;
+            p.ButtonPushEvent += InvokeButtonPushEvent;
+            p.ButtonReleaseEvent += InvokeButtonReleaseEvent;
         }
 
-        private void RemoveListenner(Peripheral p) {
+        void RemoveListenner(Peripheral p) {
             if (p == null) {
                 return;
             }
@@ -38,8 +44,17 @@ namespace IMUDevice {
             p.GyroUpdateEvent -= OnGyroUpdate;
             p.CompassUpdateEvent -= OnCompassUpdate;
             p.QuaternionUpdateEvent -= OnQuaternionUpdate;
-            p.ButtonPushEvent -= b => OnButtonPush(b.button);
-            p.ButtonReleaseEvent -= b => OnButtonRelease(b.button, b.pressTime);
+            p.IMUSensorUpdateEvent -= OnIMUSensorUpdate;
+            p.ButtonPushEvent -= InvokeButtonPushEvent;
+            p.ButtonReleaseEvent -= InvokeButtonReleaseEvent;
+        }
+
+        void InvokeButtonPushEvent(DeviceButton b) {
+            OnButtonPush(b.button);
+        }
+
+        void InvokeButtonReleaseEvent(DeviceButton b) {
+            OnButtonRelease(b.button, b.pressTime);
         }
 
         protected virtual void OnPeripheralLost() { }
@@ -47,6 +62,7 @@ namespace IMUDevice {
         protected virtual void OnGyroUpdate(Vector3 gyro) { }
         protected virtual void OnCompassUpdate(Vector3 mag) { }
         protected virtual void OnQuaternionUpdate(Quaternion quat) { }
+        protected virtual void OnIMUSensorUpdate(IMUData imu) { }
         protected virtual void OnButtonPush(string button) { }
         protected virtual void OnButtonRelease(string button, float sec) { }
     }

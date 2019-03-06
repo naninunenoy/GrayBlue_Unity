@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
 using UnityEngine;
 using IMUObserverCore;
 
@@ -111,11 +110,13 @@ namespace IMUDevice {
                 var gyroVal = new Vector3(gyro[0], gyro[1], gyro[2]);
                 var magVal = new Vector3(mag[0], mag[1], mag[2]);
                 var quatVal = new Quaternion(quat[0], quat[1], quat[2], quat[3]);
-                var devices = sensorEventDict[deviceId];
-                devices.NotifyUpdateAccel(accVal);
-                devices.NotifyUpdateGyro(gyroVal);
-                devices.NotifyUpdateCompass(magVal);
-                devices.NotifyUpdateQuaternion(quatVal);
+                var imu = new IMUData { acc = accVal, gyro = gyroVal, mag = magVal, quat = quatVal, timeUtc = DateTime.UtcNow };
+                var device = sensorEventDict[deviceId];
+                device.NotifyUpdateAccel(accVal);
+                device.NotifyUpdateGyro(gyroVal);
+                device.NotifyUpdateCompass(magVal);
+                device.NotifyUpdateQuaternion(quatVal);
+                device.NotifyUpdateIMU(imu);
             }
         }
 

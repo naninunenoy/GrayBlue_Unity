@@ -21,6 +21,7 @@ namespace IMUDevice {
         event Action<Vector3> GyroUpdateEvent;
         event Action<Vector3> CompassUpdateEvent;
         event Action<Quaternion> QuaternionUpdateEvent;
+        event Action<IMUData> IMUSensorUpdateEvent;
     }
 
     public interface IIMUEventDelegate {
@@ -28,6 +29,7 @@ namespace IMUDevice {
         void NotifyUpdateGyro(Vector3 gyro);
         void NotifyUpdateCompass(Vector3 mag);
         void NotifyUpdateQuaternion(Quaternion quat);
+        void NotifyUpdateIMU(IMUData imu);
     }
 
     public interface IButtonEventSet {
@@ -43,5 +45,13 @@ namespace IMUDevice {
     public struct DeviceButton {
         public string button;
         public float pressTime;
+    }
+
+    public struct IMUData {
+        public DateTime timeUtc;
+        public Vector3 acc;
+        public Vector3 gyro;
+        public Vector3 mag;
+        public Quaternion quat;
     }
 }

@@ -13,6 +13,7 @@ namespace IMUDevice {
         public event Action<Quaternion> QuaternionUpdateEvent;
         public event Action<DeviceButton> ButtonPushEvent;
         public event Action<DeviceButton> ButtonReleaseEvent;
+        public event Action<IMUData> IMUSensorUpdateEvent;
 
         private IBLEDevice ble = default;
         public string ID => ble?.ID ?? string.Empty;
@@ -61,6 +62,10 @@ namespace IMUDevice {
             QuaternionUpdateEvent?.Invoke(quat);
         }
 
+        public void NotifyUpdateIMU(IMUData imu) {
+            IMUSensorUpdateEvent?.Invoke(imu);
+        }
+
         public void NotifyButtonPush(DeviceButton button) {
             ButtonPushEvent?.Invoke(button);
         }
@@ -77,6 +82,7 @@ namespace IMUDevice {
             GyroUpdateEvent = null;
             CompassUpdateEvent = null;
             QuaternionUpdateEvent = null;
+            IMUSensorUpdateEvent = null;
             ButtonPushEvent = null;
             ButtonReleaseEvent = null;
             ble = null;
