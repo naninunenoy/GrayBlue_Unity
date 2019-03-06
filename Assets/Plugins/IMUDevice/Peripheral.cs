@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 namespace IMUDevice {
-    public class Peripheral : IBLEDevice, IIMUEventSet, IIMUEventDelegate, IButtonEventSet, IButtonEventDelegate {
+    public class Peripheral : IBLEDevice, IIMUEventSet, IIMUEventDelegate, IButtonEventSet, IButtonEventDelegate, IDisposable {
         public event Action DeviceLostEvent;
         public event Action<Vector3> AccelUpdateEvent;
         public event Action<Vector3> GyroUpdateEvent;
@@ -67,6 +67,19 @@ namespace IMUDevice {
 
         public void NotifyButtonRelease(DeviceButton button) {
             ButtonReleaseEvent?.Invoke(button);
+        }
+
+        public void Dispose() {
+            UnlistenEvent();
+            ble?.Disconnect();
+            DeviceLostEvent = null;
+            AccelUpdateEvent = null;
+            GyroUpdateEvent = null;
+            CompassUpdateEvent = null;
+            QuaternionUpdateEvent = null;
+            ButtonPushEvent = null;
+            ButtonReleaseEvent = null;
+            ble = null;
         }
     }
 }
