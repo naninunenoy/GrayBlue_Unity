@@ -67,6 +67,9 @@ namespace IMUDevice {
         }
 
         public void AddListenner(string id, IIMUEventDelegate imu, IButtonEventDelegate button) {
+            if (string.IsNullOrEmpty(id)) {
+                return;
+            }
             if (!sensorEventDict.ContainsKey(id) && imu != null) {
                 sensorEventDict.Add(id, imu);
             }

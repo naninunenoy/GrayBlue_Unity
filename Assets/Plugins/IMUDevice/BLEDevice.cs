@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
-using IMUObserverCore;
 
 namespace IMUDevice {
     public class BLEDevice : IBLEDevice {

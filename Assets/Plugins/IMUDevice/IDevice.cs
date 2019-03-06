@@ -27,7 +27,7 @@ namespace IMUDevice {
         void NotifyUpdateAccel(Vector3 acc);
         void NotifyUpdateGyro(Vector3 gyro);
         void NotifyUpdateCompass(Vector3 mag);
-        void NotifyUpdateQuaternion(Quaternion quaternion);
+        void NotifyUpdateQuaternion(Quaternion quat);
     }
 
     public interface IButtonEventSet {
