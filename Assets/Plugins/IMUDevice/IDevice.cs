@@ -12,15 +12,15 @@ namespace IMUDevice {
     public interface IBLEDevice : IDevice {
         Task<IBLEDevice> ConnectAsync();
         void Disconnect();
-        event Action OnLostDevice;
+        event Action DeviceLostEvent;
         void NotifyConnectionLost();
     }
 
     public interface IIMUEventSet {
-        event Action<Vector3> OnUpdateAccel;
-        event Action<Vector3> OnUpdateGyro;
-        event Action<Vector3> OnUpdateCompass;
-        event Action<Quaternion> OnUpdateQuaternion;
+        event Action<Vector3> AccelUpdateEvent;
+        event Action<Vector3> GyroUpdateEvent;
+        event Action<Vector3> CompassUpdateEvent;
+        event Action<Quaternion> QuaternionUpdateEvent;
     }
 
     public interface IIMUEventDelegate {
@@ -31,8 +31,8 @@ namespace IMUDevice {
     }
 
     public interface IButtonEventSet {
-        event Action<DeviceButton> OnButtonPush;
-        event Action<DeviceButton> OnButtonRelease;
+        event Action<DeviceButton> ButtonPushEvent;
+        event Action<DeviceButton> ButtonReleaseEvent;
     }
 
     public interface IButtonEventDelegate {

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace IMUDevice {
     public class BLEDevice : IBLEDevice {
-        public event Action OnLostDevice;
+        public event Action DeviceLostEvent;
         public string ID { private set; get; }
 
         public BLEDevice(string deviceId) {
@@ -23,7 +23,7 @@ namespace IMUDevice {
         }
 
         public void NotifyConnectionLost() {
-            OnLostDevice?.Invoke();
+            DeviceLostEvent?.Invoke();
         }
     }
 }

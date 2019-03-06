@@ -6,13 +6,13 @@ using UnityEngine;
 
 namespace IMUDevice {
     public class Peripheral : IBLEDevice, IIMUEventSet, IIMUEventDelegate, IButtonEventSet, IButtonEventDelegate {
-        public event Action OnLostDevice;
-        public event Action<Vector3> OnUpdateAccel;
-        public event Action<Vector3> OnUpdateGyro;
-        public event Action<Vector3> OnUpdateCompass;
-        public event Action<Quaternion> OnUpdateQuaternion;
-        public event Action<DeviceButton> OnButtonPush;
-        public event Action<DeviceButton> OnButtonRelease;
+        public event Action DeviceLostEvent;
+        public event Action<Vector3> AccelUpdateEvent;
+        public event Action<Vector3> GyroUpdateEvent;
+        public event Action<Vector3> CompassUpdateEvent;
+        public event Action<Quaternion> QuaternionUpdateEvent;
+        public event Action<DeviceButton> ButtonPushEvent;
+        public event Action<DeviceButton> ButtonReleaseEvent;
 
         private IBLEDevice ble = default;
         public string ID => ble?.ID ?? string.Empty;
@@ -42,31 +42,31 @@ namespace IMUDevice {
         }
 
         public void NotifyConnectionLost() {
-            OnLostDevice?.Invoke();
+            DeviceLostEvent?.Invoke();
         }
 
         public void NotifyUpdateAccel(Vector3 acc) {
-            OnUpdateAccel?.Invoke(acc);
+            AccelUpdateEvent?.Invoke(acc);
         }
 
         public void NotifyUpdateGyro(Vector3 gyro) {
-            OnUpdateGyro?.Invoke(gyro);
+            GyroUpdateEvent?.Invoke(gyro);
         }
 
         public void NotifyUpdateCompass(Vector3 mag) {
-            OnUpdateCompass?.Invoke(mag);
+            CompassUpdateEvent?.Invoke(mag);
         }
 
         public void NotifyUpdateQuaternion(Quaternion quat) {
-            OnUpdateQuaternion?.Invoke(quat);
+            QuaternionUpdateEvent?.Invoke(quat);
         }
 
         public void NotifyButtonPush(DeviceButton button) {
-            OnButtonPush?.Invoke(button);
+            ButtonPushEvent?.Invoke(button);
         }
 
         public void NotifyButtonRelease(DeviceButton button) {
-            OnButtonRelease?.Invoke(button);
+            ButtonReleaseEvent?.Invoke(button);
         }
     }
 }
