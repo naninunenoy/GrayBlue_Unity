@@ -9,13 +9,11 @@ using IMUObserverCore;
 namespace IMUDevice {
     public class Central : MonoBehaviour, IConnectionDelegate, INotifyDelegate, IDisposable {
         private readonly IPlugin blePlugin = default;
-        private readonly IDictionary<string, TaskCompletionSource<bool>> bleConnectionDict;
         private readonly IDictionary<string, IBLEDevice> bleLostDict;
         private readonly IDictionary<string, IIMUEventDelegate> sensorEventDict;
         private readonly IDictionary<string, IButtonEventDelegate> buttonEventDict;
         private Central() {
             blePlugin = Plugin.Instance;
-            bleConnectionDict = new Dictionary<string, TaskCompletionSource<bool>>();
             bleLostDict = new Dictionary<string, IBLEDevice>();
             sensorEventDict = new Dictionary<string, IIMUEventDelegate>();
             buttonEventDict = new Dictionary<string, IButtonEventDelegate>();
@@ -47,21 +45,60 @@ namespace IMUDevice {
             blePlugin.Dispose();
         }
 
-        public void OnConnectDone(string deviceId) {
-            if (bleConnectionDict.ContainsKey(deviceId)) {
-                bleConnectionDict[deviceId].SetResult(true);
+        public async Task<bool> CheckBluetoothAsync() {
+            return await blePlugin.CanUseBle().ConfigureAwait(false);
+        }
+
+        public async Task<string[]> ScanAsync() {
+            return await blePlugin.Scan().ConfigureAwait(false);
+        }
+
+        public async Task<bool> ConnectAsync(string id, IBLEDevice device) {
+            var success = await blePlugin.ConnectTo(id, this, this).ConfigureAwait(false);
+            if (success && !bleLostDict.ContainsKey(id)) {
+                bleLostDict.Add(id, device);
+            }
+            return success;
+        }
+
+        public void Disconnect(string id) {
+            blePlugin.DisconnectTo(id);
+            RemoveListenner(id);
+        }
+
+        public void AddListenner(string id, IIMUEventDelegate imu, IButtonEventDelegate button) {
+            if (!sensorEventDict.ContainsKey(id) && imu != null) {
+                sensorEventDict.Add(id, imu);
+            }
+            if (!buttonEventDict.ContainsKey(id) && button != null) {
+                buttonEventDict.Add(id, button);
             }
         }
 
-        public void OnConnectFail(string deviceId) {
-            if (bleConnectionDict.ContainsKey(deviceId)) {
-                bleConnectionDict[deviceId].SetResult(false);
+        public void RemoveListenner(string id) {
+            if (bleLostDict.ContainsKey(id)) {
+                bleLostDict.Remove(id);
             }
+            if (sensorEventDict.ContainsKey(id)) {
+                sensorEventDict.Remove(id);
+            }
+            if (buttonEventDict.ContainsKey(id)) {
+                buttonEventDict.Remove(id);
+            }
+        }
+
+        public void OnConnectDone(string deviceId) {
+            // ignore
+        }
+
+        public void OnConnectFail(string deviceId) {
+            // ignore
         }
 
         public void OnConnectLost(string deviceId) {
             if (bleLostDict.ContainsKey(deviceId)) {
                 bleLostDict[deviceId].NotifyConnectionLost();
+                RemoveListenner(deviceId);
             }
         }
 

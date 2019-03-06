@@ -15,11 +15,12 @@ namespace IMUDevice {
         }
 
         public async Task<IBLEDevice> ConnectAsync() {
-            throw new NotImplementedException();
+            var success = await Central.Instance.ConnectAsync(ID, this).ConfigureAwait(false);
+            return success ? this : null;
         }
 
         public void Disconnect() {
-            throw new NotImplementedException();
+            Central.Instance.Disconnect(ID);
         }
 
         public void NotifyConnectionLost() {
