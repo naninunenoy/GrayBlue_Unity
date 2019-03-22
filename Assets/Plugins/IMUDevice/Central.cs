@@ -6,6 +6,7 @@ using UnityEngine;
 using IMUObserverCore;
 
 namespace IMUDevice {
+    [DefaultExecutionOrder(-1)]
     public class Central : MonoBehaviour, IConnectionDelegate, INotifyDelegate, IDisposable {
         private readonly IPlugin blePlugin = default;
         private readonly IDictionary<string, IBLEDevice> bleLostDict;
@@ -89,22 +90,22 @@ namespace IMUDevice {
             }
         }
 
-        public void OnConnectDone(string deviceId) {
+        void IConnectionDelegate.OnConnectDone(string deviceId) {
             // ignore
         }
 
-        public void OnConnectFail(string deviceId) {
+        void IConnectionDelegate.OnConnectFail(string deviceId) {
             // ignore
         }
 
-        public void OnConnectLost(string deviceId) {
+        void IConnectionDelegate.OnConnectLost(string deviceId) {
             if (bleLostDict.ContainsKey(deviceId)) {
                 bleLostDict[deviceId].NotifyConnectionLost();
                 RemoveListenner(deviceId);
             }
         }
 
-        public void OnIMUDataUpdate(string deviceId, float[] acc, float[] gyro, float[] mag, float[] quat) {
+        void INotifyDelegate.OnIMUDataUpdate(string deviceId, float[] acc, float[] gyro, float[] mag, float[] quat) {
             if (sensorEventDict.ContainsKey(deviceId)) {
                 var accVal = new Vector3(acc[0], acc[1], acc[2]);
                 var gyroVal = new Vector3(gyro[0], gyro[1], gyro[2]);
@@ -120,14 +121,17 @@ namespace IMUDevice {
             }
         }
 
-        public void OnButtonPush(string deviceId, string buttonName) {
+        void INotifyDelegate.OnButtonPush(string deviceId, string buttonName) {
+            Debug.LogError(deviceId);
+
             if (buttonEventDict.ContainsKey(deviceId)) {
                 var button = new DeviceButton { button = buttonName, pressTime = 0.0F };
+                Debug.LogError(buttonName);
                 buttonEventDict[deviceId].NotifyButtonPush(button);
             }
         }
 
-        public void OnButtonRelease(string deviceId, string buttonName, float pressTime) {
+        void INotifyDelegate.OnButtonRelease(string deviceId, string buttonName, float pressTime) {
             if (buttonEventDict.ContainsKey(deviceId)) {
                 var button = new DeviceButton { button = buttonName, pressTime = pressTime };
                 buttonEventDict[deviceId].NotifyButtonPush(button);
