@@ -86,7 +86,7 @@ PluginImporter:
       settings:
         CPU: AnyCPU
         DontProcess: true
-        PlaceholderPath: Assets/Plugins/IMUObserverCore.dll
+        PlaceholderPath: Assets/Plugins/IMUDevice/IMUObserverCore.dll
         SDK: UWP
         ScriptingBackend: DotNet
   userData: 
