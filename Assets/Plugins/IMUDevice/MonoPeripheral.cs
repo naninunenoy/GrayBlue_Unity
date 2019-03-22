@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace IMUDevice {
-    public abstract class MonoPeripheral : MonoBehaviour {
+    public abstract class MonoPeripheralBase : MonoBehaviour {
         Peripheral peripheral = default;
         public Peripheral Peripheral {
             set {
@@ -64,6 +64,6 @@ namespace IMUDevice {
         protected virtual void OnQuaternionUpdate(Quaternion quat) { }
         protected virtual void OnIMUSensorUpdate(IMUData imu) { }
         protected virtual void OnButtonPush(string button) { }
-        protected virtual void OnButtonRelease(string button, float sec) { }
+        protected virtual void OnButtonRelease(string button, float pressTime) { }
     }
 }

@@ -43,35 +43,35 @@ namespace IMUDevice {
             Central.Instance.RemoveListenner(ID);
         }
 
-        public void NotifyConnectionLost() {
+        void IBLEDevice.NotifyConnectionLost() {
             DeviceLostEvent?.Invoke();
         }
 
-        public void NotifyUpdateAccel(Vector3 acc) {
+        void IIMUEventDelegate.NotifyUpdateAccel(Vector3 acc) {
             AccelUpdateEvent?.Invoke(acc);
         }
 
-        public void NotifyUpdateGyro(Vector3 gyro) {
+        void IIMUEventDelegate.NotifyUpdateGyro(Vector3 gyro) {
             GyroUpdateEvent?.Invoke(gyro);
         }
 
-        public void NotifyUpdateCompass(Vector3 mag) {
+        void IIMUEventDelegate.NotifyUpdateCompass(Vector3 mag) {
             CompassUpdateEvent?.Invoke(mag);
         }
 
-        public void NotifyUpdateQuaternion(Quaternion quat) {
+        void IIMUEventDelegate.NotifyUpdateQuaternion(Quaternion quat) {
             QuaternionUpdateEvent?.Invoke(quat);
         }
 
-        public void NotifyUpdateIMU(IMUData imu) {
+        void IIMUEventDelegate.NotifyUpdateIMU(IMUData imu) {
             IMUSensorUpdateEvent?.Invoke(imu);
         }
 
-        public void NotifyButtonPush(DeviceButton button) {
+        void IButtonEventDelegate.NotifyButtonPush(DeviceButton button) {
             ButtonPushEvent?.Invoke(button);
         }
 
-        public void NotifyButtonRelease(DeviceButton button) {
+        void IButtonEventDelegate.NotifyButtonRelease(DeviceButton button) {
             ButtonReleaseEvent?.Invoke(button);
         }
 
