@@ -17,6 +17,7 @@ namespace IMUDevice {
 
         private IBLEDevice ble = default;
         public string ID => ble?.ID ?? string.Empty;
+        public bool IsConnected => ble?.IsConnected ?? false;
 
         public Peripheral(IBLEDevice bleDevice) {
             ble = bleDevice;

@@ -12,6 +12,7 @@ namespace IMUDevice {
     public interface IBLEDevice : IDevice {
         Task<IBLEDevice> ConnectAsync();
         void Disconnect();
+        bool IsConnected { get; }
         event Action DeviceLostEvent;
         void NotifyConnectionLost();
     }
