@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+
 using IMUObserverCore;
 
 namespace IMUDevice {
@@ -12,6 +14,7 @@ namespace IMUDevice {
         private readonly IDictionary<string, IBLEDevice> bleLostDict;
         private readonly IDictionary<string, IIMUEventDelegate> sensorEventDict;
         private readonly IDictionary<string, IButtonEventDelegate> buttonEventDict;
+        private SynchronizationContext context = default;
         private Central() {
             blePlugin = Plugin.Instance;
             bleLostDict = new Dictionary<string, IBLEDevice>();
@@ -31,6 +34,7 @@ namespace IMUDevice {
         }
 
         void Awake() {
+            context = SynchronizationContext.Current;
             if (instance == null) {
                 instance = this;
             } else {
@@ -113,28 +117,31 @@ namespace IMUDevice {
                 var quatVal = new Quaternion(quat[0], quat[1], quat[2], quat[3]);
                 var imu = new IMUData { acc = accVal, gyro = gyroVal, mag = magVal, quat = quatVal, timeUtc = DateTime.UtcNow };
                 var device = sensorEventDict[deviceId];
-                device.NotifyUpdateAccel(accVal);
-                device.NotifyUpdateGyro(gyroVal);
-                device.NotifyUpdateCompass(magVal);
-                device.NotifyUpdateQuaternion(quatVal);
-                device.NotifyUpdateIMU(imu);
+                context?.Post(_ => {
+                    device.NotifyUpdateAccel(accVal);
+                    device.NotifyUpdateGyro(gyroVal);
+                    device.NotifyUpdateCompass(magVal);
+                    device.NotifyUpdateQuaternion(quatVal);
+                    device.NotifyUpdateIMU(imu);
+                }, null);
             }
         }
 
         void INotifyDelegate.OnButtonPush(string deviceId, string buttonName) {
-            Debug.LogError(deviceId);
-
             if (buttonEventDict.ContainsKey(deviceId)) {
                 var button = new DeviceButton { button = buttonName, pressTime = 0.0F };
-                Debug.LogError(buttonName);
-                buttonEventDict[deviceId].NotifyButtonPush(button);
+                context?.Post(_ => {
+                    buttonEventDict[deviceId].NotifyButtonPush(button);
+                }, null);
             }
         }
 
         void INotifyDelegate.OnButtonRelease(string deviceId, string buttonName, float pressTime) {
             if (buttonEventDict.ContainsKey(deviceId)) {
                 var button = new DeviceButton { button = buttonName, pressTime = pressTime };
-                buttonEventDict[deviceId].NotifyButtonPush(button);
+                context?.Post(_ => {
+                    buttonEventDict[deviceId].NotifyButtonPush(button);
+                }, null);
             }
         }
     }
