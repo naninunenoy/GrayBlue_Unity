@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class SampleScene : MonoBehaviour {
+    [SerializeField] GameObject m5stackPrefab = default;
     [SerializeField] Text printText = default;
 
     async void Start() {
@@ -36,7 +37,7 @@ public class SampleScene : MonoBehaviour {
         if (peripheral == null) {
             return null;
         }
-        var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        var cube = Instantiate(m5stackPrefab);
         cube.name = id;
         var script = cube.AddComponent<MonoPeripheralExample>();
         script.Peripheral = peripheral;
