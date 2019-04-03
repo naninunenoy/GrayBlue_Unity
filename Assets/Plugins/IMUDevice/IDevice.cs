@@ -50,6 +50,11 @@ namespace IMUDevice {
 
     public struct IMUData {
         public DateTime timeUtc;
+        public SensorData raw;
+        public SensorData unity;
+    }
+
+    public struct SensorData {
         public Vector3 acc;
         public Vector3 gyro;
         public Vector3 mag;

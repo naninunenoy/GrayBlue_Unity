@@ -19,16 +19,15 @@ public class MonoPeripheralExample : MonoPeripheralBase {
     }
 
     protected override void OnIMUSensorUpdate(IMUData imu) {
-        var unityQuat = (new Quaternion(-imu.quat.z, imu.quat.y, -imu.quat.x, imu.quat.w)).normalized;
+        var q = imu.unity.quat;
         if (baseRotarion == Quaternion.identity) {
-            baseRotarion = unityQuat;
+            baseRotarion = q;
         }
-        transform.rotation = Quaternion.Inverse(baseRotarion) * unityQuat;
+        transform.rotation = Quaternion.Inverse(baseRotarion) * q;
     }
 
-    bool isBig = false;
     protected override void OnButtonPush(string button) {
-        transform.localScale = isBig ? Vector3.one : Vector3.one * 1.5F;
-        isBig = !isBig;
+        // base pose reset
+        baseRotarion = Quaternion.identity;
     }
 }

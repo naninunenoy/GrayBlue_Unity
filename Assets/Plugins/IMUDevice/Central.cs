@@ -115,7 +115,8 @@ namespace IMUDevice {
                 var gyroVal = new Vector3(gyro[0], gyro[1], gyro[2]);
                 var magVal = new Vector3(mag[0], mag[1], mag[2]);
                 var quatVal = new Quaternion(quat[0], quat[1], quat[2], quat[3]);
-                var imu = new IMUData { acc = accVal, gyro = gyroVal, mag = magVal, quat = quatVal, timeUtc = DateTime.UtcNow };
+                var raw = new SensorData { acc = accVal, gyro = gyroVal, mag = magVal, quat = quatVal };
+                var imu = new IMUData { timeUtc = DateTime.UtcNow, raw = raw, unity = raw.ToUnityWorld() };
                 var device = sensorEventDict[deviceId];
                 context?.Post(_ => {
                     device.NotifyUpdateAccel(accVal);
@@ -143,6 +144,18 @@ namespace IMUDevice {
                     buttonEventDict[deviceId].NotifyButtonRelease(button);
                 }, null);
             }
+        }
+    }
+
+    static class SensorToUnityExtension {
+        public static SensorData ToUnityWorld(this SensorData data) {
+            // x->z, y->y, z->x
+            return new SensorData {
+                acc = new Vector3(data.acc.z, data.acc.y, data.acc.x),
+                gyro = new Vector3(data.gyro.z, data.gyro.y, data.gyro.x),
+                mag = new Vector3(-data.mag.z, data.mag.x, data.mag.y),
+                quat = new Quaternion(-data.quat.z, data.quat.y, -data.quat.x, data.quat.w).normalized,
+            };
         }
     }
 }
