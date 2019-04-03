@@ -140,7 +140,7 @@ namespace IMUDevice {
             if (buttonEventDict.ContainsKey(deviceId)) {
                 var button = new DeviceButton { button = buttonName, pressTime = pressTime };
                 context?.Post(_ => {
-                    buttonEventDict[deviceId].NotifyButtonPush(button);
+                    buttonEventDict[deviceId].NotifyButtonRelease(button);
                 }, null);
             }
         }
