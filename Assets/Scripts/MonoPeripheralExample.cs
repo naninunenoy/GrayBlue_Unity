@@ -4,6 +4,7 @@ using UnityEngine;
 using IMUDevice;
 
 public class MonoPeripheralExample : MonoPeripheralBase {
+    Quaternion baseRotarion = Quaternion.identity;
 
     void OnDisable() {
         Peripheral?.UnlistenEvent();
@@ -18,7 +19,11 @@ public class MonoPeripheralExample : MonoPeripheralBase {
     }
 
     protected override void OnIMUSensorUpdate(IMUData imu) {
-        transform.rotation = imu.quat;
+        var unityQuat = (new Quaternion(-imu.quat.z, imu.quat.y, -imu.quat.x, imu.quat.w)).normalized;
+        if (baseRotarion == Quaternion.identity) {
+            baseRotarion = unityQuat;
+        }
+        transform.rotation = Quaternion.Inverse(baseRotarion) * unityQuat;
     }
 
     bool isBig = false;
