@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-using IMUObserverCore;
+using GrayBlueUWPCore;
 
 namespace IMUDevice {
     [DefaultExecutionOrder(-1)]
