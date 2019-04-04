@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using IMUDevice;
+using GrayBlue;
 
 public class MonoPeripheralExample : MonoPeripheralBase {
     Quaternion baseRotarion = Quaternion.identity;

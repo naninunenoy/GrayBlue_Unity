@@ -7,7 +7,7 @@ using UnityEngine;
 
 using GrayBlueUWPCore;
 
-namespace IMUDevice {
+namespace GrayBlue {
     [DefaultExecutionOrder(-1)]
     public class Central : MonoBehaviour, IConnectionDelegate, INotifyDelegate, IDisposable {
         private readonly IPlugin blePlugin = default;

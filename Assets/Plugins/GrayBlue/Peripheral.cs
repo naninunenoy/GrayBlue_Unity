@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace IMUDevice {
+namespace GrayBlue {
     public class Peripheral : IBLEDevice, IIMUEventSet, IIMUEventDelegate, IButtonEventSet, IButtonEventDelegate, IDisposable {
         public event Action DeviceLostEvent;
         public event Action<Vector3> AccelUpdateEvent;

@@ -22,7 +22,7 @@ public class SampleScene : MonoBehaviour {
     }
 
     async Task<string[]> BleScanAsync() {
-        var result = await IMUDevice.Central.Instance.ScanAsync();
+        var result = await GrayBlue.Central.Instance.ScanAsync();
         if (result == null) {
             throw new System.Exception("scan failed.");
         }
@@ -45,13 +45,13 @@ public class SampleScene : MonoBehaviour {
         return cube;
     }
 
-    async Task<IMUDevice.Peripheral> ConnectAsync(string id) {
+    async Task<GrayBlue.Peripheral> ConnectAsync(string id) {
         // Ble connect
-        var ble = new IMUDevice.BLEDevice(id);
-        var success = await IMUDevice.Central.Instance.ConnectAsync(id, ble);
+        var ble = new GrayBlue.BLEDevice(id);
+        var success = await GrayBlue.Central.Instance.ConnectAsync(id, ble);
         if (!success) {
             return null;
         }
-        return new IMUDevice.Peripheral(ble);
+        return new GrayBlue.Peripheral(ble);
     }
 }

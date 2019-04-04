@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace IMUDevice {
+namespace GrayBlue {
     public abstract class MonoPeripheralBase : MonoBehaviour {
         Peripheral peripheral = default;
         public Peripheral Peripheral {

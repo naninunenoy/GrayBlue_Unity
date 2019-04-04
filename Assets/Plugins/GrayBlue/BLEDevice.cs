@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace IMUDevice {
+namespace GrayBlue {
     public class BLEDevice : IBLEDevice {
         public event Action DeviceLostEvent;
         public string ID { private set; get; }
