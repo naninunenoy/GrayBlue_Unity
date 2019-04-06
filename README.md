@@ -11,7 +11,7 @@ This is plugin for Unity(C#) to use [GrayBlue](https://github.com/naninunenoy/Gr
 
 <img src="https://img.shields.io/badge/Gray-Blue-blue.svg?labelColor=lightGray" /> notifies 9-DOF motion data.
 
-This is plugin helps GrayBlue device operation like scan/connect/disconnect and receiving 9-DOF sensor data (acc/gyro/mag/quaternion) from GrayBlue device.
+This plugin helps GrayBlue device operation like scan/connect/disconnect and receiving 9-DOF sensor data (acc/gyro/mag/quaternion) from GrayBlue device.
 This plugin show you how to bind your `GameObject` and GrayBlue device easily.
 
 ## Environment
