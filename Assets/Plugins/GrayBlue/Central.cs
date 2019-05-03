@@ -44,7 +44,11 @@ namespace GrayBlue {
                 Destroy(gameObject);
             }
 #if UNITY_EDITOR || UNITY_WEBGL
-            webSocketProxy.Open(context);
+            try {
+                webSocketProxy.Open(context);
+            } catch (Exception e) {
+                Debug.LogError($"websocket open fail {e.Message} at {webSocketProxy.URL}");
+            }
 #endif
         }
 

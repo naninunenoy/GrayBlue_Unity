@@ -9,6 +9,7 @@ using GrayBlueUWPCore;
 
 namespace GrayBlue.WebSocket {
     public class WebSocketProxy : IDisposable {
+        public readonly string URL;
         private readonly WebSocketSharp.WebSocket webSocket;
         private readonly INotifyDelegate notifyDelegate;
         private readonly IConnectionDelegate connectDelegate;
@@ -17,7 +18,8 @@ namespace GrayBlue.WebSocket {
 
         public WebSocketProxy(string host, int port,
                               IConnectionDelegate connectDelegate, INotifyDelegate notifyDelegate) {
-            webSocket = new WebSocketSharp.WebSocket($"ws://{host}:{port}/");
+            URL = $"ws://{host}:{port}/";
+            webSocket = new WebSocketSharp.WebSocket(URL);
             this.connectDelegate = connectDelegate;
             this.notifyDelegate = notifyDelegate;
             requestAgent = new RequestAgent();
@@ -29,7 +31,11 @@ namespace GrayBlue.WebSocket {
             webSocket.OnMessage += OnWebSocketMessageReceive;
             webSocket.OnError += OnWebSocketError;
             webSocket.OnClose += OnWebSocketClose;
-            webSocket.Connect();
+            try {
+                webSocket.Connect();
+            } catch (Exception e) {
+                throw e;
+            }
         }
 
         public void Close() {
