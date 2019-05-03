@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using GrayBlue.WebSocket.JsonData;
@@ -83,28 +82,33 @@ namespace GrayBlue.WebSocket {
         }
 
         public string CreateCheckBleJson() {
-            var ret = "{}";
-            return ret;
+            var method = new Method { Name = MethodType.CheckBle, Param = "" };
+            var json = new GrayBlueJson { Type = JsonType.Method, Content = JsonUtility.ToJson(method) };
+            return JsonUtility.ToJson(json);
         }
 
         public string CreateScanJson() {
-            var ret = "{}";
-            return ret;
+            var method = new Method { Name = MethodType.Scan, Param = "" };
+            var json = new GrayBlueJson { Type = JsonType.Method, Content = JsonUtility.ToJson(method) };
+            return JsonUtility.ToJson(json);
         }
 
         public string CreateConnectJson(string id) {
-            var ret = "{}";
-            return ret;
+            var method = new Method { Name = MethodType.Connect, Param = id };
+            var json = new GrayBlueJson { Type = JsonType.Method, Content = JsonUtility.ToJson(method) };
+            return JsonUtility.ToJson(json);
         }
 
         public string CreateDisconnectJson(string id) {
-            var ret = "{}";
-            return ret;
+            var method = new Method { Name = MethodType.Disconnect, Param = id };
+            var json = new GrayBlueJson { Type = JsonType.Method, Content = JsonUtility.ToJson(method) };
+            return JsonUtility.ToJson(json);
         }
 
         public string CreateDisconnectAllJson() {
-            var ret = "{}";
-            return ret;
+            var method = new Method { Name = MethodType.DisconnectAll, Param = "" };
+            var json = new GrayBlueJson { Type = JsonType.Method, Content = JsonUtility.ToJson(method) };
+            return JsonUtility.ToJson(json);
         }
     }
 }

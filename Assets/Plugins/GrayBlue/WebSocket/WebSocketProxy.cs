@@ -52,7 +52,7 @@ namespace GrayBlue.WebSocket {
 
         public void Dispose() {
             Close();
-            requestAgent.Dispose();
+            requestAgent?.Dispose();
         }
 
         public async Task<bool> CheckBluetoothAsync() {
@@ -91,6 +91,9 @@ namespace GrayBlue.WebSocket {
             }
             var rootJsonData = JsonUtility.FromJson<JsonData.GrayBlueJson>(e.Data);
             switch (rootJsonData.Type) {
+            case JsonData.JsonType.Result:
+                requestAgent?.ExtractResultJson(rootJsonData.Content);
+                break;
             case JsonData.JsonType.DeviceStateChange:
                 var device = JsonUtility.FromJson<JsonData.Device>(rootJsonData.Content);
                 if (device.State == "Lost") {
