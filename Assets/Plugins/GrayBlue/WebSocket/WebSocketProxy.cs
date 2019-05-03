@@ -39,8 +39,10 @@ namespace GrayBlue.WebSocket {
         }
 
         public void Close() {
-            var json = requestAgent.CreateDisconnectAllJson();
-            webSocket.Send(json);
+            if (webSocket.IsAlive) {
+                var json = requestAgent.CreateDisconnectAllJson();
+                webSocket.Send(json);
+            }
             webSocket.OnOpen -= OnWebSocketOpen;
             webSocket.OnMessage -= OnWebSocketMessageReceive;
             webSocket.OnError -= OnWebSocketError;
@@ -50,6 +52,7 @@ namespace GrayBlue.WebSocket {
 
         public void Dispose() {
             Close();
+            requestAgent.Dispose();
         }
 
         public async Task<bool> CheckBluetoothAsync() {

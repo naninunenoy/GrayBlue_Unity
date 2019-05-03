@@ -1,17 +1,28 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using GrayBlue.WebSocket.JsonData;
 
 namespace GrayBlue.WebSocket {
-    public class RequestAgent {
+    public class RequestAgent : IDisposable {
+        private readonly IDictionary<string, TaskCompletionSource<bool>> connectTscDict;
         private TaskCompletionSource<bool> bleTsc;
         private TaskCompletionSource<string[]> scanTsc;
-        private IDictionary<string, TaskCompletionSource<bool>> connectTscDict;
 
         public RequestAgent() {
             connectTscDict = new Dictionary<string, TaskCompletionSource<bool>>();
+        }
+
+        public void Dispose() {
+            bleTsc.TrySetCanceled();
+            scanTsc.TrySetCanceled();
+            foreach (var tsc in connectTscDict) {
+                tsc.Value.TrySetCanceled();
+            }
+            connectTscDict.Clear();
         }
 
         public async Task<bool> WaitCheckBluetoothResultAsync() {
@@ -24,7 +35,7 @@ namespace GrayBlue.WebSocket {
 
         public async Task<string[]> WaitScanResultAsync() {
             if (scanTsc != null) {
-                return new string[] { "" }; // already scan processing
+                return new string[0]; // already scan processing
             }
             scanTsc = new TaskCompletionSource<string[]>();
             return await scanTsc.Task;
@@ -32,7 +43,7 @@ namespace GrayBlue.WebSocket {
 
         public async Task<bool> WaitConnectResultAsync(string id) {
             if (connectTscDict.ContainsKey(id)) {
-                return false;// already connect processing
+                return false; // already connect processing
             }
             var tcs = new TaskCompletionSource<bool>();
             connectTscDict.Add(id, tcs);
@@ -42,7 +53,33 @@ namespace GrayBlue.WebSocket {
         }
 
         public void ExtractResultJson(string contentJson) {
-
+            var result = JsonUtility.FromJson<MethodResult>(contentJson);
+            switch (result.Method.Name) {
+            case MethodType.CheckBle:
+                if (bool.TryParse(result.Result, out bool bleOK)) {
+                    bleTsc?.SetResult(bleOK);
+                } else {
+                    bleTsc?.SetResult(false);
+                }
+                break;
+            case MethodType.Scan:
+                var ids = result.Result?.Split(',') ?? new string[0];
+                scanTsc?.SetResult(ids);
+                break;
+            case MethodType.Connect:
+                var id = result.Method.Param;
+                if (connectTscDict.ContainsKey(id)) {
+                    if (bool.TryParse(result.Result, out bool success)) {
+                        connectTscDict[id]?.SetResult(success);
+                    } else {
+                        connectTscDict[id]?.SetResult(false);
+                    }
+                }
+                break;
+            default:
+                // Do Nothing
+                break;
+            }
         }
 
         public string CreateCheckBleJson() {
