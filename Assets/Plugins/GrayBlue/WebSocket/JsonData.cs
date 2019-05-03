@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GrayBlue.JsonData {
+namespace GrayBlue.WebSocket.JsonData {
     public enum JsonType {
         Undefine = 0,
         Method,
@@ -26,7 +26,10 @@ namespace GrayBlue.JsonData {
     public class GrayBlueJson {
         [SerializeField] string type;
         [SerializeField] string content;
-        public string Type { set { type = value; } get => type; }
+        public JsonType Type {
+            set { type = value.ToString(); }
+            get => Enum.IsDefined(typeof(JsonType), type) ? (JsonType)Enum.Parse(typeof(JsonType), type) : JsonType.Undefine;
+        }
         public string Content { set { content = value; } get => content; }
     }
 
@@ -34,7 +37,10 @@ namespace GrayBlue.JsonData {
     public class Method {
         [SerializeField] string method_name;
         [SerializeField] string method_param;
-        public string Name { set { method_name = value; } get => method_name; }
+        public MethodType Name {
+            set { method_name = value.ToString(); }
+            get => Enum.IsDefined(typeof(MethodType), method_name) ? (MethodType)Enum.Parse(typeof(MethodType), method_name) : MethodType.Undefine;
+        }
         public string Param { set { method_param = value; } get => method_param; }
     }
 
