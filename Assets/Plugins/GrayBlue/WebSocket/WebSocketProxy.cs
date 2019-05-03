@@ -2,24 +2,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 using WebSocketSharp;
 using GrayBlueUWPCore;
 
 namespace GrayBlue.WebSocket {
-    public class WebSocketProxy {
+    public class WebSocketProxy : IDisposable {
         private readonly WebSocketSharp.WebSocket webSocket;
-        private readonly SynchronizationContext context;
         private readonly INotifyDelegate notify;
-        public WebSocketProxy(string host, int port, 
-                              INotifyDelegate grayBlueNotify, 
-                              SynchronizationContext mainThreadContext) {
+        private readonly RequestAgent requestAgent;
+        private SynchronizationContext context;
+
+        public WebSocketProxy(string host, int port,  INotifyDelegate grayBlueNotify) {
             webSocket = new WebSocketSharp.WebSocket($"ws://{host}:{port}/");
             notify = grayBlueNotify;
-            context = mainThreadContext;
+            requestAgent = new RequestAgent();
         }
 
-        public void Open() {
+        public void Open(SynchronizationContext mainThreadContext) {
+            context = mainThreadContext;
             webSocket.OnOpen += OnWebSocketOpen;
             webSocket.OnMessage += OnWebSocketMessageReceive;
             webSocket.OnError += OnWebSocketError;
@@ -28,11 +30,40 @@ namespace GrayBlue.WebSocket {
         }
 
         public void Close() {
+            var json = requestAgent.CreateDisconnectAllJson();
+            webSocket.Send(json);
             webSocket.OnOpen -= OnWebSocketOpen;
             webSocket.OnMessage -= OnWebSocketMessageReceive;
             webSocket.OnError -= OnWebSocketError;
             webSocket.OnClose -= OnWebSocketClose;
             webSocket.Close();
+        }
+
+        public void Dispose() {
+            Close();
+        }
+
+        public async Task<bool> CheckBluetoothAsync() {
+            var json = requestAgent.CreateCheckBleJson();
+            webSocket.Send(json);
+            return await requestAgent.WaitCheckBluetoothResultAsync();
+        }
+
+        public async Task<string[]> ScanAsync() {
+            var json = requestAgent.CreateScanJson();
+            webSocket.Send(json);
+            return await requestAgent.WaitScanResultAsync();
+        }
+
+        public async Task<bool> ConnectAsync(string id) {
+            var json = requestAgent.CreateConnectJson(id);
+            webSocket.Send(json);
+            return await requestAgent.WaitConnectResultAsync(id);
+        }
+
+        public void Disconnect(string id) {
+            var json = requestAgent.CreateDisconnectJson(id);
+            webSocket.Send(json);
         }
 
         // websocket callback

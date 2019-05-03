@@ -4,19 +4,22 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-
 using GrayBlueUWPCore;
 
 namespace GrayBlue {
     [DefaultExecutionOrder(-1)]
     public class Central : MonoBehaviour, IConnectionDelegate, INotifyDelegate, IDisposable {
         private readonly IPlugin blePlugin = default;
+        private readonly WebSocket.WebSocketProxy webSocketProxy;
         private readonly IDictionary<string, IBLEDevice> bleLostDict;
         private readonly IDictionary<string, IIMUEventDelegate> sensorEventDict;
         private readonly IDictionary<string, IButtonEventDelegate> buttonEventDict;
         private SynchronizationContext context = default;
         private Central() {
             blePlugin = Plugin.Instance;
+#if UNITY_EDITOR || UNITY_WEBGL
+            webSocketProxy = new WebSocket.WebSocketProxy("localhost", 12345, this);
+#endif
             bleLostDict = new Dictionary<string, IBLEDevice>();
             sensorEventDict = new Dictionary<string, IIMUEventDelegate>();
             buttonEventDict = new Dictionary<string, IButtonEventDelegate>();
@@ -40,9 +43,15 @@ namespace GrayBlue {
             } else {
                 Destroy(gameObject);
             }
+#if UNITY_EDITOR || UNITY_WEBGL
+            webSocketProxy.Open(context);
+#endif
         }
 
         public void Dispose() {
+#if UNITY_EDITOR || UNITY_WEBGL
+            webSocketProxy.Dispose();
+#endif
             bleLostDict.Clear();
             sensorEventDict.Clear();
             buttonEventDict.Clear();
@@ -50,15 +59,27 @@ namespace GrayBlue {
         }
 
         public async Task<bool> CheckBluetoothAsync() {
+#if UNITY_EDITOR || UNITY_WEBGL
+            return await webSocketProxy.CheckBluetoothAsync().ConfigureAwait(false);
+#else
             return await blePlugin.CanUseBle().ConfigureAwait(false);
+#endif
         }
 
         public async Task<string[]> ScanAsync() {
+#if UNITY_EDITOR || UNITY_WEBGL
+            return await webSocketProxy.ScanAsync().ConfigureAwait(false);
+#else
             return await blePlugin.Scan().ConfigureAwait(false);
+#endif
         }
 
         public async Task<bool> ConnectAsync(string id, IBLEDevice device) {
+#if UNITY_EDITOR || UNITY_WEBGL
+            var success = await webSocketProxy.ConnectAsync(id).ConfigureAwait(false);
+#else
             var success = await blePlugin.ConnectTo(id, this, this).ConfigureAwait(false);
+#endif
             if (success && !bleLostDict.ContainsKey(id)) {
                 bleLostDict.Add(id, device);
             }
@@ -66,7 +87,11 @@ namespace GrayBlue {
         }
 
         public void Disconnect(string id) {
+#if UNITY_EDITOR || UNITY_WEBGL
+            webSocketProxy.Disconnect(id);
+#else
             blePlugin.DisconnectTo(id);
+#endif
             RemoveListenner(id);
         }
 
