@@ -10,13 +10,16 @@ using GrayBlueUWPCore;
 namespace GrayBlue.WebSocket {
     public class WebSocketProxy : IDisposable {
         private readonly WebSocketSharp.WebSocket webSocket;
-        private readonly INotifyDelegate notify;
+        private readonly INotifyDelegate notifyDelegate;
+        private readonly IConnectionDelegate connectDelegate;
         private readonly RequestAgent requestAgent;
         private SynchronizationContext context;
 
-        public WebSocketProxy(string host, int port,  INotifyDelegate grayBlueNotify) {
+        public WebSocketProxy(string host, int port,
+                              IConnectionDelegate connectDelegate, INotifyDelegate notifyDelegate) {
             webSocket = new WebSocketSharp.WebSocket($"ws://{host}:{port}/");
-            notify = grayBlueNotify;
+            this.connectDelegate = connectDelegate;
+            this.notifyDelegate = notifyDelegate;
             requestAgent = new RequestAgent();
         }
 
@@ -78,31 +81,35 @@ namespace GrayBlue.WebSocket {
                 return;
             }
             var rootJsonData = JsonUtility.FromJson<JsonData.GrayBlueJson>(e.Data);
-            Action<INotifyDelegate> notifyAction = delegate { };
-
             switch (rootJsonData.Type) {
+            case JsonData.JsonType.DeviceStateChange:
+                var device = JsonUtility.FromJson<JsonData.Device>(rootJsonData.Content);
+                if (device.State == "Lost") {
+                    context?.Post(_ => {
+                        connectDelegate?.OnConnectLost(device.DeviceId);
+                    }, null);
+                }
+                break;
             case JsonData.JsonType.NotifyIMU:
-                notifyAction = x => {
-                    var data = JsonDataExtractor.ToIMUNotifyData(rootJsonData.Content);
-                    x.OnIMUDataUpdate(data.deviceId, data.acc, data.gyro, data.mag, data.quat);
-                };
+                var imuData = JsonDataExtractor.ToIMUNotifyData(rootJsonData.Content);
+                context?.Post(_ => {
+                    notifyDelegate?.OnIMUDataUpdate(imuData.deviceId, imuData.acc, imuData.gyro, imuData.mag, imuData.quat);
+                }, null);
                 break;
             case JsonData.JsonType.NotifyButton:
-                notifyAction = x => {
-                    var data = JsonDataExtractor.ToButtonNotifyData(rootJsonData.Content);
-                    if (data.isPress) {
-                        x.OnButtonPush(data.deviceId, data.button);
+                var btnData = JsonDataExtractor.ToButtonNotifyData(rootJsonData.Content);
+                context?.Post(_ => {
+                    if (btnData.isPress) {
+                        notifyDelegate?.OnButtonPush(btnData.deviceId, btnData.button);
                     } else {
-                        x.OnButtonRelease(data.deviceId, data.button, data.time);
+                        notifyDelegate?.OnButtonRelease(btnData.deviceId, btnData.button, btnData.time);
                     }
-                };
+                }, null);
                 break;
             default:
                 // Do Nothing
                 break;
             }
-            // メインスレッドで通知を行う
-            context?.Post(_ => { notifyAction(notify); }, null);
         }
 
         private void OnWebSocketError(object sender, ErrorEventArgs e) {

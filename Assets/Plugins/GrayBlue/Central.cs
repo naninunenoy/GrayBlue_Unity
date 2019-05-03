@@ -18,7 +18,7 @@ namespace GrayBlue {
         private Central() {
             blePlugin = Plugin.Instance;
 #if UNITY_EDITOR || UNITY_WEBGL
-            webSocketProxy = new WebSocket.WebSocketProxy("localhost", 12345, this);
+            webSocketProxy = new WebSocket.WebSocketProxy("localhost", 12345, this, this);
 #endif
             bleLostDict = new Dictionary<string, IBLEDevice>();
             sensorEventDict = new Dictionary<string, IIMUEventDelegate>();
