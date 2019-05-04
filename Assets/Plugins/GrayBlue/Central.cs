@@ -18,7 +18,7 @@ namespace GrayBlue {
         private Central() {
             blePlugin = Plugin.Instance;
 #if UNITY_EDITOR || UNITY_WEBGL
-            webSocketProxy = new WebSocket.WebSocketProxy("localhost", 12345, this, this);
+            webSocketProxy = new WebSocket.WebSocketProxy("127.0.0.1", 12345, this, this);
 #endif
             bleLostDict = new Dictionary<string, IBLEDevice>();
             sensorEventDict = new Dictionary<string, IIMUEventDelegate>();
@@ -43,13 +43,15 @@ namespace GrayBlue {
             } else {
                 Destroy(gameObject);
             }
+        }
+
+        public async Task<bool> ValidateAsync() {
 #if UNITY_EDITOR || UNITY_WEBGL
-            try {
-                webSocketProxy.Open(context);
-            } catch (Exception e) {
-                Debug.LogError($"websocket open fail {e.Message} at {webSocketProxy.URL}");
-            }
+            return await webSocketProxy.Open(context);
+#else
+            return await Task.FromResult(true);
 #endif
+
         }
 
         public void Dispose() {

@@ -15,6 +15,7 @@ namespace GrayBlue.WebSocket {
         private readonly IConnectionDelegate connectDelegate;
         private readonly RequestAgent requestAgent;
         private SynchronizationContext context;
+        private TaskCompletionSource<bool> openTcs;
 
         public WebSocketProxy(string host, int port,
                               IConnectionDelegate connectDelegate, INotifyDelegate notifyDelegate) {
@@ -25,16 +26,22 @@ namespace GrayBlue.WebSocket {
             requestAgent = new RequestAgent();
         }
 
-        public void Open(SynchronizationContext mainThreadContext) {
+        public async Task<bool> Open(SynchronizationContext mainThreadContext) {
             context = mainThreadContext;
             webSocket.OnOpen += OnWebSocketOpen;
             webSocket.OnMessage += OnWebSocketMessageReceive;
             webSocket.OnError += OnWebSocketError;
             webSocket.OnClose += OnWebSocketClose;
+            // connet
             try {
-                webSocket.Connect();
+                openTcs = new TaskCompletionSource<bool>();
+                webSocket.ConnectAsync();
+                var result = await openTcs.Task;
+                openTcs = null;
+                return result;
             } catch (Exception e) {
-                throw e;
+                Debug.LogWarning(e);
+                return false;
             }
         }
 
@@ -82,6 +89,7 @@ namespace GrayBlue.WebSocket {
 
         private void OnWebSocketOpen(object sender, EventArgs e) {
             Debug.Log($"OnWebSocketOpen");
+            openTcs?.SetResult(true);
         }
 
         private void OnWebSocketMessageReceive(object sender, MessageEventArgs e) {
@@ -130,6 +138,7 @@ namespace GrayBlue.WebSocket {
 
         private void OnWebSocketClose(object sender, CloseEventArgs e) {
             Debug.LogWarning($"OnWebSocketClose {e.Code} {e.Reason}");
+            openTcs?.SetResult(false);
         }
     }
 }

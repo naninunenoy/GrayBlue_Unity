@@ -13,6 +13,7 @@ namespace GrayBlueDemo {
             printText.text = "Any Message Here. \n";
             string[] deviceIds = default;
             try {
+                await GrayBlue.Central.Instance.ValidateAsync();
                 deviceIds = await BleScanAsync();
             } catch (System.Exception e) {
                 printText.text = e.Message;
