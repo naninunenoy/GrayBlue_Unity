@@ -23,14 +23,14 @@ namespace GrayBlue.WebSocket.JsonData {
     }
 
     [Serializable]
-    public class GrayBlueJson {
+    public class GrayBlueJson<T> {
         [SerializeField] string type;
-        [SerializeField] string content;
+        [SerializeField] T content;
         public JsonType Type {
             set { type = value.ToString(); }
             get => Enum.IsDefined(typeof(JsonType), type) ? (JsonType)Enum.Parse(typeof(JsonType), type) : JsonType.Undefine;
         }
-        public string Content { set { content = value; } get => content; }
+        public T Content { set { content = value; } get => content; }
     }
 
     [Serializable]

@@ -97,13 +97,14 @@ namespace GrayBlue.WebSocket {
             if (!e.IsText) {
                 return;
             }
-            var rootJsonData = JsonUtility.FromJson<JsonData.GrayBlueJson>(e.Data);
-            switch (rootJsonData.Type) {
+            var typeJson = JsonUtility.FromJson<JsonData.GrayBlueJson<object>>(e.Data);
+            switch (typeJson.Type) {
             case JsonData.JsonType.Result:
-                requestAgent?.ExtractResultJson(rootJsonData.Content);
+                var result = JsonUtility.FromJson<JsonData.GrayBlueJson<JsonData.MethodResult>>(e.Data).Content;
+                requestAgent?.ExtractResultJson(result);
                 break;
             case JsonData.JsonType.DeviceStateChange:
-                var device = JsonUtility.FromJson<JsonData.Device>(rootJsonData.Content);
+                var device = JsonUtility.FromJson<JsonData.GrayBlueJson<JsonData.Device>>(e.Data).Content;
                 if (device.State == "Lost") {
                     context?.Post(_ => {
                         connectDelegate?.OnConnectLost(device.DeviceId);
@@ -111,13 +112,15 @@ namespace GrayBlue.WebSocket {
                 }
                 break;
             case JsonData.JsonType.NotifyIMU:
-                var imuData = JsonDataExtractor.ToIMUNotifyData(rootJsonData.Content);
+                var imuJson = JsonUtility.FromJson<JsonData.GrayBlueJson<JsonData.IMU>>(e.Data).Content;
+                var imuData = JsonDataExtractor.ToIMUNotifyData(imuJson);
                 context?.Post(_ => {
                     notifyDelegate?.OnIMUDataUpdate(imuData.deviceId, imuData.acc, imuData.gyro, imuData.mag, imuData.quat);
                 }, null);
                 break;
             case JsonData.JsonType.NotifyButton:
-                var btnData = JsonDataExtractor.ToButtonNotifyData(rootJsonData.Content);
+                var btnJson = JsonUtility.FromJson<JsonData.GrayBlueJson<JsonData.Button>>(e.Data).Content;
+                var btnData = JsonDataExtractor.ToButtonNotifyData(btnJson);
                 context?.Post(_ => {
                     if (btnData.isPress) {
                         notifyDelegate?.OnButtonPush(btnData.deviceId, btnData.button);

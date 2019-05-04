@@ -51,8 +51,7 @@ namespace GrayBlue.WebSocket {
             return result;
         }
 
-        public void ExtractResultJson(string contentJson) {
-            var result = JsonUtility.FromJson<MethodResult>(contentJson);
+        public void ExtractResultJson(MethodResult result) {
             switch (result.Method.Name) {
             case MethodType.CheckBle:
                 if (bool.TryParse(result.Result, out bool bleOK)) {
@@ -83,31 +82,31 @@ namespace GrayBlue.WebSocket {
 
         public string CreateCheckBleJson() {
             var method = new Method { Name = MethodType.CheckBle, Param = "" };
-            var json = new GrayBlueJson { Type = JsonType.Method, Content = JsonUtility.ToJson(method) };
+            var json = new GrayBlueJson<Method> { Type = JsonType.Method, Content = method };
             return JsonUtility.ToJson(json);
         }
 
         public string CreateScanJson() {
             var method = new Method { Name = MethodType.Scan, Param = "" };
-            var json = new GrayBlueJson { Type = JsonType.Method, Content = JsonUtility.ToJson(method) };
+            var json = new GrayBlueJson<Method> { Type = JsonType.Method, Content = method };
             return JsonUtility.ToJson(json);
         }
 
         public string CreateConnectJson(string id) {
             var method = new Method { Name = MethodType.Connect, Param = id };
-            var json = new GrayBlueJson { Type = JsonType.Method, Content = JsonUtility.ToJson(method) };
+            var json = new GrayBlueJson<Method> { Type = JsonType.Method, Content = method };
             return JsonUtility.ToJson(json);
         }
 
         public string CreateDisconnectJson(string id) {
             var method = new Method { Name = MethodType.Disconnect, Param = id };
-            var json = new GrayBlueJson { Type = JsonType.Method, Content = JsonUtility.ToJson(method) };
+            var json = new GrayBlueJson<Method> { Type = JsonType.Method, Content = method };
             return JsonUtility.ToJson(json);
         }
 
         public string CreateDisconnectAllJson() {
             var method = new Method { Name = MethodType.DisconnectAll, Param = "" };
-            var json = new GrayBlueJson { Type = JsonType.Method, Content = JsonUtility.ToJson(method) };
+            var json = new GrayBlueJson<Method> { Type = JsonType.Method, Content = method };
             return JsonUtility.ToJson(json);
         }
     }

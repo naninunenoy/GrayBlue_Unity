@@ -35,41 +35,31 @@ namespace GrayBlue.WebSocket {
             };
         }
 
-        public static IMUNotifyData ToIMUNotifyData(string jsonContent) {
+        public static IMUNotifyData ToIMUNotifyData(IMU data) {
             var ret = IMUNotifyData.Empty;
-            try {
-                var data = JsonUtility.FromJson<IMU>(jsonContent);
-                ret.deviceId = data.DeviceId;
-                ret.acc[0] = data.Acc.x;
-                ret.acc[1] = data.Acc.y;
-                ret.acc[2] = data.Acc.z;
-                ret.gyro[0] = data.Gyro.x;
-                ret.gyro[1] = data.Gyro.y;
-                ret.gyro[2] = data.Gyro.z;
-                ret.mag[0] = data.Mag.x;
-                ret.mag[1] = data.Mag.y;
-                ret.mag[2] = data.Mag.z;
-                ret.quat[0] = data.Quat.x;
-                ret.quat[1] = data.Quat.y;
-                ret.quat[2] = data.Quat.z;
-                ret.quat[3] = data.Quat.w;
-            } catch (Exception e) {
-                Debug.LogWarning(e.Message);
-            }
+            ret.deviceId = data.DeviceId;
+            ret.acc[0] = data.Acc.x;
+            ret.acc[1] = data.Acc.y;
+            ret.acc[2] = data.Acc.z;
+            ret.gyro[0] = data.Gyro.x;
+            ret.gyro[1] = data.Gyro.y;
+            ret.gyro[2] = data.Gyro.z;
+            ret.mag[0] = data.Mag.x;
+            ret.mag[1] = data.Mag.y;
+            ret.mag[2] = data.Mag.z;
+            ret.quat[0] = data.Quat.x;
+            ret.quat[1] = data.Quat.y;
+            ret.quat[2] = data.Quat.z;
+            ret.quat[3] = data.Quat.w;
             return ret;
         }
 
-        public static ButtonNotifyData ToButtonNotifyData(string jsonContent) {
+        public static ButtonNotifyData ToButtonNotifyData(Button data) {
             var ret = ButtonNotifyData.Empty;
-            try {
-                var data = JsonUtility.FromJson<Button>(jsonContent);
-                ret.deviceId = data.DeviceId;
-                ret.button = data.ButtonName;
-                ret.isPress = data.IsPressed;
-                ret.time = data.PressTime;
-            } catch (Exception e) {
-                Debug.LogWarning(e.Message);
-            }
+            ret.deviceId = data.DeviceId;
+            ret.button = data.ButtonName;
+            ret.isPress = data.IsPressed;
+            ret.time = data.PressTime;
             return ret;
         }
     }
