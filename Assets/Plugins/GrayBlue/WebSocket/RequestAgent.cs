@@ -61,8 +61,11 @@ namespace GrayBlue.WebSocket {
                 }
                 break;
             case MethodType.Scan:
-                var ids = result.Result?.Split(',') ?? new string[0];
-                scanTsc?.SetResult(ids);
+                if (string.IsNullOrEmpty(result.Result)) {
+                    scanTsc?.SetResult(new string[0]);
+                } else {
+                    scanTsc?.SetResult(result.Result.Split(','));
+                }
                 break;
             case MethodType.Connect:
                 var id = result.Method.Param;
