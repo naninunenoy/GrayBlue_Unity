@@ -93,7 +93,6 @@ namespace GrayBlue.WebSocket {
         }
 
         private void OnWebSocketMessageReceive(object sender, MessageEventArgs e) {
-            Debug.Log($"OnWebSocketMessageReceive {e.Data}");
             if (!e.IsText) {
                 return;
             }
