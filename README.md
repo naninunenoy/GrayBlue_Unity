@@ -22,7 +22,8 @@ This plugin show you how to bind your `GameObject` and GrayBlue device easily.
 ## Environment
 Windows 10 (build 0.1506 and higher)
 
-**You cannot use GrayBlue device in Unity Editor. You have to build your project as WSA(.NET) to use GrayBlue device actually.**
+**Would you like to use GrayBlue device in Unity Editor?**
+**Yes, it possible with [GrayBlue_WinProxy](https://github.com/naninunenoy/GrayBlue_WinProxy).**
 
 ## Library
 This project includes [GrayBlue_UWP](https://github.com/naninunenoy/GrayBlue_UWP) and its all dependency libraries as dll.
