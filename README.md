@@ -33,6 +33,11 @@ This project includes [GrayBlue_UWP](https://github.com/naninunenoy/GrayBlue_UWP
     - dependency
        * [System.Threading.Tasks.Extensions](https://www.nuget.org/packages/System.Threading.Tasks.Extensions/)
        * [System.ValueTuple](https://www.nuget.org/packages/System.ValueTuple/)
+       
+And websocket library working on Unity.
+ * websocket-sharp
+   - https://github.com/sta/websocket-sharp
+   - LICENSE: [MIT](https://github.com/sta/websocket-sharp/blob/master/LICENSE.txt)
 
 ## Licence
 [MIT](https://github.com/naninunenoy/GrayBlue_Unity/blob/master/LICENSE)
