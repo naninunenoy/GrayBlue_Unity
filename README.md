@@ -20,7 +20,8 @@ This plugin helps GrayBlue device operation like scan/connect/disconnect and rec
 This plugin show you how to bind your `GameObject` and GrayBlue device easily.
 
 ## Environment
-Windows 10 (build 0.1506 and higher)
+* Windows 10 (build 0.1506 and higher)
+* Unity 2018.3.7f1
 
 **You cannot use GrayBlue device in Unity Editor. You have to build your project as WSA(.NET) to use GrayBlue device actually.**
 
