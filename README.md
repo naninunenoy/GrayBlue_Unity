@@ -20,7 +20,8 @@ This plugin helps GrayBlue device operation like scan/connect/disconnect and rec
 This plugin show you how to bind your `GameObject` and GrayBlue device easily.
 
 ## Environment
-Windows 10 (build 0.1506 and higher)
+* Windows 10 (build 0.1506 and higher)
+* Unity 2018.3.7f1
 
 **Would you like to use GrayBlue device in Unity Editor?**
 **Yes, it possible with [GrayBlue_WinProxy](https://github.com/naninunenoy/GrayBlue_WinProxy).**
@@ -34,6 +35,11 @@ This project includes [GrayBlue_UWP](https://github.com/naninunenoy/GrayBlue_UWP
     - dependency
        * [System.Threading.Tasks.Extensions](https://www.nuget.org/packages/System.Threading.Tasks.Extensions/)
        * [System.ValueTuple](https://www.nuget.org/packages/System.ValueTuple/)
+       
+And websocket library working on Unity.
+ * websocket-sharp
+   - https://github.com/sta/websocket-sharp
+   - LICENSE: [MIT](https://github.com/sta/websocket-sharp/blob/master/LICENSE.txt)
 
 ## Licence
 [MIT](https://github.com/naninunenoy/GrayBlue_Unity/blob/master/LICENSE)
