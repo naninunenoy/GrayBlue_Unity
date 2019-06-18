@@ -9,6 +9,7 @@ PluginImporter:
   isPreloaded: 0
   isOverridable: 0
   isExplicitlyReferenced: 0
+  validateReferences: 1
   platformData:
   - first:
       '': Any
@@ -94,7 +95,7 @@ PluginImporter:
         DontProcess: true
         PlaceholderPath: Assets/Plugins/GrayBlue/WinUWP/GrayBlueUWPCore.dll
         SDK: UWP
-        ScriptingBackend: DotNet
+        ScriptingBackend: Il2Cpp
   userData: 
   assetBundleName: 
   assetBundleVariant: 
