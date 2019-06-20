@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using UnityEditor;
 using UnityEngine;
@@ -17,7 +17,7 @@ namespace GrayBlue.Editor {
             if (state == PlayModeStateChange.EnteredPlayMode) {
                 // GrayBlue_WinProxyを起動
                 try {
-                    var projectRootPath= System.IO.Directory.GetParent(Application.dataPath).FullName;
+                    var projectRootPath = System.IO.Directory.GetParent(Application.dataPath).FullName;
                     grayBlueExe = new Process();
                     grayBlueExe.StartInfo.FileName = $"{projectRootPath}/{exePath}";
                     UnityEngine.Debug.Log($"{grayBlueExe.StartInfo.FileName}");
